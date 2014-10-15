@@ -1,11 +1,3 @@
-sys_exit equ 1
-sys_read equ 3
-sys_write equ 4
-stdin equ 0
-stdout equ 1
-stderr equ 3
-	;; add those other sys calls
-	
 SECTION .data
 
 SECTION .bss
@@ -14,10 +6,5 @@ SECTION .text
 global _start
 
 _start:
-	jmp Exit
-	
-Exit:
-	mov eax, sys_exit
-	mov ebx, 0
-	int 80h
+	jmp exit
 	

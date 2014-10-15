@@ -9,12 +9,35 @@ SECTION .data
 SECTION .bss
 	max_buff equ 1000
 	text_buff resb max_buff+1 ;Always keep final byte 0
+
+	%include "bss.t"
 	
 SECTION .text
 global _start
 
 _start:
-;;; print hex values
+	
+;;; Leave registers as informative as possible
+;;; And linking up to other procedures
+
+;;; And if you're being called
+;;; you cant have any uneven stack ops
+;;; absolute
+int 3	
+	mov eax, test_lbl_a
+
+test_lbl_a:
+	mov ebx, test_lbl_b
+	mov ecx, test_lbl_c
+
+test_lbl_b:
+
+
+test_lbl_c:mov eax, 0FFD8BBAAh
+	mov ecx, hex_str
+	call stringx
+	call print
+	
 	
 	jmp exit
 

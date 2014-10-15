@@ -1,5 +1,4 @@
 #!/bin/bash
-# -l for lst files -O93 for optimization 
-# nasm -ic:\macrolib\ -f obj myfile.asm
-nasm -felf -o$1".o" -g $1".asm" 
-ld -o $1 $1".o"
+
+nasm -felf -ocode/$1".o" -g $1".asm" -w+orphan-labels -l $1".lst"
+ld -o $1 code/{$1,tools,sys_calls}".o"

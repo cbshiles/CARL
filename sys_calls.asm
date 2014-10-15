@@ -1,5 +1,22 @@
 ;;; Sys-calls meta function
 
+SEGMENT .data
+	
+global create
+global open_r
+global open_rw
+global open_w
+global open
+global hear
+global read
+global perror
+global nwln
+global print_ln
+global print
+global write
+global exit
+
+
 ;;; sys_open
 ;;; EBX - file name
 
@@ -10,10 +27,10 @@
 ;;; (1 execute) (2 write) (4 read) can be added. ex: (7 all)
 ;;; (*1 other) (*10 group) (*100 usr) these section are or'd together
 ;;; 1FFh is an ok permission for now
-create:	mov 	ecx, 102 	;Hopefully create (100) + rw (2)
-		jmp open
 ;;; WARNING - Ugly hack - set for *eventual* removal
-	
+create:	mov 	ecx, 102 	;Hopefully create (100) + rw (2)
+	jmp open
+
 open_w:	mov ecx, 1		;Write-only
 	jmp open
 
@@ -25,7 +42,9 @@ open_r:	mov ecx, 0		;Read-only
 ;;; ECX - flags
 open:	mov eax, 5		;sys_open
 	jmp sysc
-;;; EAX - file descriptor (int - fd)
+
+	
+;;; EBX - file descriptor (int - fd)
 ;;; sys_open
 
 ;;; hear-write fns
@@ -40,11 +59,11 @@ perror:	mov ebx, 3		;3 = stderr
 
 ;;; Newline functions
 ;;; These print their own seperate strings, so all regs are used
-nwln:	mov ecx, newline
+nwln:	mov ecx, 0xA
 	mov edx, 2
 	jmp write
 
-print_ln:mov ecx, newline
+print_ln:mov ecx, 0xA
 	mov edx, 2
 ;;; Newline functions
 	
