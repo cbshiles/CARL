@@ -1,6 +1,9 @@
 ;;; Sys-calls meta function
-
 SEGMENT .data
+
+newline db 0xA,0
+	
+SEGMENT .text
 	
 global create
 global open_r
@@ -59,12 +62,12 @@ perror:	mov ebx, 3		;3 = stderr
 
 ;;; Newline functions
 ;;; These print their own seperate strings, so all regs are used
-nwln:	mov ecx, 0xA
-	mov edx, 2
+nwln:	mov ecx, newline
+	mov edx, 1
 	jmp write
 
-print_ln:mov ecx, 0xA
-	mov edx, 2
+print_ln:mov ecx, newline
+	mov edx, 1
 ;;; Newline functions
 	
 print:	mov ebx, 1 		;1 is stdout
