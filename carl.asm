@@ -2,15 +2,15 @@
 %include "header.asm"
 	
 SECTION .data
-	string iXten ".carl"
-	string oXten ".csm"
+	string iXten, ".carl"
+	string oXten, ".csm"
 SECTION .bss
 	
 SECTION .text
 global _start
 
 _start: int 3
-	nwln
+	call nwln
 	jmp exit
 ;;; ;;
 	pop ecx 		;# of arguments

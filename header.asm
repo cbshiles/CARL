@@ -2,6 +2,7 @@
     %define START_H 
 extern str_len
 extern stringx
+extern xten
 
 extern create
 extern open_r

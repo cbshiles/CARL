@@ -8,7 +8,7 @@ SECTION .bss
 SECTION .text
 global _start
 	
-_start:	
+_start:
 	call nwln
 	call nwln
 	pout specChars
@@ -17,4 +17,5 @@ _start:
 	mov eax, edx
 	mov ecx, buffa
 	call stringx
+	call print
 	jmp exit
