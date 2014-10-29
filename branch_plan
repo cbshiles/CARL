@@ -1,0 +1,44 @@
+Take a single file as input.
+
+Attempt to open this file, exclusively for reading.
+
+If unable, print "Unable to access source file.", 0xA
+
+--------------------------------------------------------------------------------
+
+Otherwise, start reading chunks of code and loading it into the buffer.
+
+Start with small chunks to make sure it works correctly, then up to 4096 (or something)
+
+Actually first thing that is done is call the character puller(chpu), because that will check 
+if a new chunk of code is needed.
+
+--------------------------------------------------------------------------------------------
+
+The router goes even before that, since it will normally be the one calling chpu. Once it has
+a character if checks if it is a part of the special character set. If not, it will send the
+character to the currently set state, and will set the new state to the return value from
+that state.
+
+File extension change thing needs to be used.
+
+If the output file already exists, overwrite it.
+
+If none exists, create it and open it for reading.
+
+There needs to be a routine for adding (a char OR a series of chars)? to the ouput buffer.
+
+Calling it should cause the fullness of the buffer to be checked, and to be actually written
+to file if needed.
+
+Have a single state that gives the character to the output printer.
+
+Advanced Plan:
+
+Bootstrap - use backquote(`) as a way to initially insert NASM code directly. Use this when
+writing programs to do thing which are not possible in the language yet. Figure out how to
+turn the code into carl. Backquote will eventually get new functionality, but the direct
+insertion may live onas an operator.
+
+*Note while this may be considered advanced, it is not really. This has to happen before any
+serious language development occurs.

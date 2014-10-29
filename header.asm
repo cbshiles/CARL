@@ -1,9 +1,11 @@
 %ifndef START_H
-    %define START_H 
+    %define START_H
+	;; tools.asm
 extern str_len
 extern stringx
 extern xten
 
+	;; syscalls.asm
 extern create
 extern open_r
 extern open_rw

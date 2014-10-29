@@ -6,6 +6,11 @@
 	%1Len equ $-%1-1
 %endmacro
 
+%macro stringL 2
+	%1 db %2,10,0
+	%1Len equ $-%1-1
+%endmacro
+
 %macro pout 1
 	mov ecx, %1
 	mov edx, %1Len

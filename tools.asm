@@ -23,6 +23,7 @@ str_len:			;ECX - ptr to string
 
 ;;; EAX - value to convert
 ;;; ECX - memory location to store string
+;;; Uses bl
 stringx:			;Converts # into hex string
 	mov	edx, ecx
 	push	ecx
@@ -68,7 +69,7 @@ xten:	push ebx		;Pop back into EBX
 	inc ebx
 	jmp .rloop
 
-.zero:				;If hit a zero, add a period
+.zero:				;If hit a zero(/0), add a period
 	mov [ebx], ah
 
 .period:			;If hit a period inc pointer
@@ -91,6 +92,5 @@ xten:	push ebx		;Pop back into EBX
 	
 ;;; Return EBX Indentical pointer to modified file name
 ;;; Return ECX Length of modified string
-;;; EAX, EDX : junk
+;;; AX, EDX : junk
 
-;;; TEST - on ones w/ xtens and w/o

@@ -51,11 +51,14 @@ open:	mov eax, 5		;sys_open
 ;;; sys_open
 
 ;;; hear-write fns
+;;; EBX - file descriptor
 ;;; ECX -location of memory for read to / write from
 ;;; EDX - length of chunk of memory
 hear:	mov ebx, 0 		;0 is for stdin
 read:	mov eax, 3 		;3 is sys_read
 	jmp sysc
+
+;;; EAX - # of bytes actually read
 	
 perror:	mov ebx, 3		;3 = stderr
 	jmp write
