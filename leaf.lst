@@ -1,0 +1,140 @@
+     1                                  %include "macros.asm"
+     2                              <1> %ifndef MACROS_MAC 
+     3                              <1>     %define MACROS_MAC 
+     4                              <1>     
+     5                              <1> %macro string 2
+     6                              <1> 	%1 db %2,0
+     7                              <1> 	%1Len equ $-%1-1
+     8                              <1> %endmacro
+     9                              <1> 
+    10                              <1> %macro stringL 2
+    11                              <1> 	%1 db %2,10,0
+    12                              <1> 	%1Len equ $-%1-1
+    13                              <1> %endmacro
+    14                              <1> 
+    15                              <1> %macro pout 1
+    16                              <1> 	mov ecx, %1
+    17                              <1> 	mov edx, %1Len
+    18                              <1> 	call print
+    19                              <1> %endmacro
+    20                              <1> 
+    21                              <1> 
+    22                              <1> %endif
+    23                                  %include "header.asm"
+    24                              <1> %ifndef START_H
+    25                              <1>     %define START_H
+    26                              <1> 	;; tools.asm
+    27                              <1> extern str_len
+    28                              <1> extern stringx
+    29                              <1> extern xten
+    30                              <1> 
+    31                              <1> 	;; syscalls.asm
+    32                              <1> extern create
+    33                              <1> extern open_r
+    34                              <1> extern open_rw
+    35                              <1> extern open_w
+    36                              <1> extern open
+    37                              <1> extern hear
+    38                              <1> extern read
+    39                              <1> extern perror
+    40                              <1> extern nwln
+    41                              <1> extern print_ln
+    42                              <1> extern print
+    43                              <1> extern write
+    44                              <1> extern exit
+    45                              <1> 
+    46                              <1> %endif
+    47                                  	
+    48                                  SECTION .data
+    49                                  	stringL open_source, "Unable to access source file."
+    50 00000000 556E61626C6520746F- <1>  %1 db %2,10,0
+    51 00000009 206163636573732073- <1>
+    52 00000012 6F757263652066696C- <1>
+    53 0000001B 652E0A00            <1>
+    54                              <1>  %1Len equ $-%1-1
+    55                                  	stringL arg_num, "Invalid # of arguments."
+    56 0000001F 496E76616C69642023- <1>  %1 db %2,10,0
+    57 00000028 206F6620617267756D- <1>
+    58 00000031 656E74732E0A00      <1>
+    59                              <1>  %1Len equ $-%1-1
+    60                                  
+    61 00000038 [00000000]              	iPtr dd iBuff
+    62                                  
+    63                                  SECTION .bss
+    64                                  	BSZ equ 50
+    65 00000000 <res 00000032>          	iBuff resb BSZ
+    66 00000032 <res 00000032>          	oBuff resb BSZ
+    67 00000064 <res 00000004>          	iLast resd 1
+    68                                  
+    69                                  SECTION .text
+    70                                  global _start
+    71                                  	
+    72                                  _start:
+    73 00000000 5B                      	pop ebx 		;# of arguments
+    74 00000001 83FB02                  	cmp ebx, 2		;Only takes 1 arg atm
+    75 00000004 7411                    	je arg_check		;Passed the check
+    76                                  	pout arg_num
+    77 00000006 B9[1F000000]        <1>  mov ecx, %1
+    78 0000000B BA18000000          <1>  mov edx, %1Len
+    79 00000010 E8(00000000)        <1>  call print
+    80 00000015 EB1D                    	jmp wrap_up
+    81                                  	
+    82                                  arg_check:	
+    83 00000017 5B                      	pop ebx			;Program's path
+    84                                  	
+    85 00000018 5B                      	pop ebx			;Source path
+    86 00000019 E8(00000000)            	call open_r
+    87                                  
+    88 0000001E 83F8FF                  	cmp eax, -1 ;Sucessful calls return a positive fd
+    89 00000021 7F11                    	jg .cont
+    90                                  	pout open_source
+    91 00000023 B9[00000000]        <1>  mov ecx, %1
+    92 00000028 BA1E000000          <1>  mov edx, %1Len
+    93 0000002D E8(00000000)        <1>  call print
+    94 00000032 EB00                    	jmp wrap_up
+    95                                  	
+    96                                  
+    97                                  
+    98                                  .cont:
+    99                                  	;jmp router		
+   100                                  ;;; Create output file here, i believe (Yes indeed)
+   101                                  	
+   102                                  wrap_up:
+   103                                  	
+   104 00000034 E9(00000000)            	jmp exit
+   105                                  
+   106                                  
+   107                                  
+   108                                  	
+   109                                  
+   110                                  fill_iBuff:			;Fill input buffer
+   111 00000039 B9[00000000]            	mov ecx, iBuff
+   112 0000003E BA32000000              	mov edx, BSZ
+   113 00000043 E8(00000000)            	call read
+   114 00000048 A3[64000000]            	mov [iLast], eax
+   115 0000004D C3                      	ret
+   116                                  ;;; Returns # of bytes read into EAX, iLast
+   117                                  
+   118                                  chpu:				;Character pull
+   119 0000004E B8[00000000]            	mov eax, iBuff
+   120 00000053 8B1D[38000000]          	mov ebx, [iPtr]
+   121 00000059 0305[64000000]          	add eax, [iLast]	;EAX = bytes read + start of iBuff
+   122 0000005F 39C3                    	cmp ebx, eax		
+   123 00000061 720F                    	jb .simp_pull		;If iPtr(ebx) less than that, all good
+   124                                  
+   125 00000063 83E832                  	sub eax, BSZ 		;To figure out whether last read filled iBuff
+   126 00000066 3D[00000000]            	cmp eax, iBuff		
+   127 0000006B 720F                    	jb .daEnd		;If less than iBuff, file over
+   128                                  
+   129 0000006D E8C7FFFFFF              	call fill_iBuff
+   130                                  	
+   131                                  .simp_pull:
+   132 00000072 8A03                    	mov al, [ebx]
+   133 00000074 43                      	inc ebx
+   134 00000075 891D[38000000]          	mov [iPtr], ebx
+   135 0000007B C3                      	ret
+   136                                  
+   137                                  .daEnd:
+   138 0000007C EBB6                    	jmp wrap_up
+   139                                  
+   140                                  ;;; Returns char in al, uses ebx

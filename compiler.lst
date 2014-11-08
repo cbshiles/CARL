@@ -1,0 +1,74 @@
+     1                                  %include "macros.asm"
+     2                              <1> %ifndef MACROS_MAC 
+     3                              <1>     %define MACROS_MAC 
+     4                              <1>     
+     5                              <1> %macro string 2
+     6                              <1> 	%1 db %2,0
+     7                              <1> 	%1Len equ $-%1-1
+     8                              <1> %endmacro
+     9                              <1> 
+    10                              <1> %macro stringL 2
+    11                              <1> 	%1 db %2,10,0
+    12                              <1> 	%1Len equ $-%1-1
+    13                              <1> %endmacro
+    14                              <1> 
+    15                              <1> %macro pout 1
+    16                              <1> 	mov ecx, %1
+    17                              <1> 	mov edx, %1Len
+    18                              <1> 	call print
+    19                              <1> %endmacro
+    20                              <1> 
+    21                              <1> 
+    22                              <1> %endif
+    23                                  %include "header.asm"
+    24                              <1> %ifndef START_H
+    25                              <1>     %define START_H
+    26                              <1> 	;; tools.asm
+    27                              <1> extern str_len
+    28                              <1> extern stringx
+    29                              <1> extern xten
+    30                              <1> 
+    31                              <1> 	;; syscalls.asm
+    32                              <1> extern create
+    33                              <1> extern open_r
+    34                              <1> extern open_rw
+    35                              <1> extern open_w
+    36                              <1> extern open
+    37                              <1> extern hear
+    38                              <1> extern read
+    39                              <1> extern perror
+    40                              <1> extern nwln
+    41                              <1> extern print_ln
+    42                              <1> extern print
+    43                              <1> extern write
+    44                              <1> extern exit
+    45                              <1> 
+    46                              <1> %endif
+    47                                  	
+    48                                  SECTION .data
+    49                                  	string ta, "test1.carl"
+    50 00000000 74657374312E636172- <1>  %1 db %2,0
+    51 00000009 6C00                <1>
+    52                              <1>  %1Len equ $-%1-1
+    53                                  	string tb, "test2"
+    54 0000000B 746573743200        <1>  %1 db %2,0
+    55                              <1>  %1Len equ $-%1-1
+    56                                  	string oXten, "asm"
+    57 00000011 61736D00            <1>  %1 db %2,0
+    58                              <1>  %1Len equ $-%1-1
+    59                                  SECTION .bss
+    60                                  
+    61                                  SECTION .text
+    62                                  global _start
+    63                                  	
+    64                                  _start:
+    65 00000000 BB[00000000]            	mov ebx, ta
+    66 00000005 BA[11000000]            	mov edx, oXten
+    67                                  
+    68 0000000A E8(00000000)            	call xten
+    69                                  
+    70 0000000F BAC8000000              	mov edx, 200 		;File permissions
+    71 00000014 81CA90010000            	or edx, 400
+    72 0000001A BA90010000              	mov edx, 400
+    73 0000001F E8(00000000)            	call create
+    74 00000024 E9(00000000)            	jmp exit

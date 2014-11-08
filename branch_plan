@@ -14,12 +14,6 @@ Actually first thing that is done is call the character puller(chpu), because th
 if a new chunk of code is needed.
 
 --------------------------------------------------------------------------------------------
-
-The router goes even before that, since it will normally be the one calling chpu. Once it has
-a character if checks if it is a part of the special character set. If not, it will send the
-character to the currently set state, and will set the new state to the return value from
-that state.
-
 File extension change thing needs to be used.
 
 If the output file already exists, overwrite it.
@@ -30,6 +24,11 @@ There needs to be a routine for adding (a char OR a series of chars)? to the oup
 
 Calling it should cause the fullness of the buffer to be checked, and to be actually written
 to file if needed.
+
+The router goes even before that, since it will normally be the one calling chpu. Once it has
+a character if checks if it is a part of the special character set. If not, it will send the
+character to the currently set state, and will set the new state to the return value from
+that state.
 
 Have a single state that gives the character to the output printer.
 

@@ -1,0 +1,12 @@
+%include "macros.asm"
+%include "header.asm"
+	
+SECTION .data
+
+SECTION .bss
+
+SECTION .text
+global _start
+	
+_start:
+	jmp exit

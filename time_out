@@ -1,0 +1,6 @@
+
+	mid equ (32+126)/2 ;For the name change hack 
+;;; Creation of new file
+	mov ebx, test_file
+	mov edx, 1FFh ;Is an ok permission for now
+	call create

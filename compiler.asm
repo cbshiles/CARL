@@ -16,6 +16,6 @@ _start:
 
 	call xten
 
-	mov edx, 0x1FF 		;File permissions
+	mov edx, 400	;File permissiosn
 	call create
 	jmp exit

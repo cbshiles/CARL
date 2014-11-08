@@ -1,0 +1,80 @@
+     1                                  %include "macros.asm"
+     2                              <1> %ifndef MACROS_MAC 
+     3                              <1>     %define MACROS_MAC 
+     4                              <1>     
+     5                              <1> %macro string 2
+     6                              <1> 	%1 db %2,0
+     7                              <1> 	%1Len equ $-%1-1
+     8                              <1> %endmacro
+     9                              <1> 
+    10                              <1> %macro stringL 2
+    11                              <1> 	%1 db %2,10,0
+    12                              <1> 	%1Len equ $-%1-1
+    13                              <1> %endmacro
+    14                              <1> 
+    15                              <1> %macro pout 1
+    16                              <1> 	mov ecx, %1
+    17                              <1> 	mov edx, %1Len
+    18                              <1> 	call print
+    19                              <1> %endmacro
+    20                              <1> 
+    21                              <1> 
+    22                              <1> %endif
+    23                                  %include "header.asm"
+    24                              <1> %ifndef START_H
+    25                              <1>     %define START_H
+    26                              <1> 	;; tools.asm
+    27                              <1> extern str_len
+    28                              <1> extern stringx
+    29                              <1> extern xten
+    30                              <1> 
+    31                              <1> 	;; syscalls.asm
+    32                              <1> extern create
+    33                              <1> extern open_r
+    34                              <1> extern open_rw
+    35                              <1> extern open_w
+    36                              <1> extern open
+    37                              <1> extern hear
+    38                              <1> extern read
+    39                              <1> extern perror
+    40                              <1> extern nwln
+    41                              <1> extern print_ln
+    42                              <1> extern print
+    43                              <1> extern write
+    44                              <1> extern exit
+    45                              <1> 
+    46                              <1> %endif
+    47                                  
+    48                                  SECTION .data
+    49 00000000 FEFFFF7F                endSieve dd 7FFFFFFEh 		;Last valid bit
+    50                                  
+    51                                  SECTION .bss
+    52 00000000 <res 10000000>          	sieve resd 04000000h
+    53                                  SECTION .text
+    54                                  global _start
+    55                                  
+    56                                  _start:
+    57                                  ;;; Fill sieve will all ones
+    58 00000000 8B0D[00000000]          	mov ecx, [endSieve] 	;#of bits
+    59 00000006 C1E905                  	shr ecx, 5 		;2^5 = 32 = 8bits*4bytes # of dwords
+    60 00000009 41                      	inc ecx 		;In case one got rounded
+    61 0000000A BF[00000000]            	mov edi, sieve
+    62                                  
+    63 0000000F C7440FFFFFFFFFFF        .fill:	mov dword[edi+ecx-1], -1	;Fill in sieve with those 1s
+    64 00000017 E2F6                    	loop .fill
+    65                                  
+    66 00000019 B858000000              	mov eax, 88
+    67                                  
+    68 0000001E E805000000              	call primer
+    69                                  	
+    70 00000023 E9(00000000)            	jmp exit
+    71                                  
+    72                                  primer:	
+    73                                  ;;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+    74                                  	
+    75 00000028 A1[00000000]            	mov eax, [endSieve]
+    76 0000002D B9[00000000]            	mov ecx, sieve
+    77 00000032 E8(00000000)            	call stringx
+    78 00000037 E8(00000000)            	call print
+    79 0000003C E8(00000000)            	call print_ln
+    80 00000041 E9(00000000)            	jmp exit

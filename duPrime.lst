@@ -1,0 +1,102 @@
+     1                                  %include "macros.asm"
+     2                              <1> %ifndef MACROS_MAC 
+     3                              <1>     %define MACROS_MAC 
+     4                              <1>     
+     5                              <1> %macro string 2
+     6                              <1> 	%1 db %2,0
+     7                              <1> 	%1Len equ $-%1-1
+     8                              <1> %endmacro
+     9                              <1> 
+    10                              <1> %macro stringL 2
+    11                              <1> 	%1 db %2,10,0
+    12                              <1> 	%1Len equ $-%1-1
+    13                              <1> %endmacro
+    14                              <1> 
+    15                              <1> %macro pout 1
+    16                              <1> 	mov ecx, %1
+    17                              <1> 	mov edx, %1Len
+    18                              <1> 	call print
+    19                              <1> %endmacro
+    20                              <1> 
+    21                              <1> 
+    22                              <1> %endif
+    23                                  %include "header.asm"
+    24                              <1> %ifndef START_H
+    25                              <1>     %define START_H
+    26                              <1> 	;; tools.asm
+    27                              <1> extern str_len
+    28                              <1> extern stringx
+    29                              <1> extern xten
+    30                              <1> 
+    31                              <1> 	;; syscalls.asm
+    32                              <1> extern create
+    33                              <1> extern open_r
+    34                              <1> extern open_rw
+    35                              <1> extern open_w
+    36                              <1> extern open
+    37                              <1> extern hear
+    38                              <1> extern read
+    39                              <1> extern perror
+    40                              <1> extern nwln
+    41                              <1> extern print_ln
+    42                              <1> extern print
+    43                              <1> extern write
+    44                              <1> extern exit
+    45                              <1> 
+    46                              <1> %endif
+    47                                  	
+    48                                  SECTION .data
+    49                                  
+    50                                  SECTION .bss
+    51 00000000 <res 00000008>          	num resb 8
+    52                                  SECTION .text
+    53                                  global _start
+    54                                  	
+    55                                  _start:
+    56                                  
+    57 00000000 B819000000              	mov eax, 25
+    58 00000005 E819000000              	call primer
+    59 0000000A B9[00000000]            	mov ecx, num
+    60 0000000F E8(00000000)            	call stringx
+    61 00000014 E8(00000000)            	call print
+    62 00000019 E8(00000000)            	call print_ln
+    63 0000001E E9(00000000)            	jmp exit
+    64                                  
+    65                                  primer:
+    66 00000023 83F802                  	cmp eax, 2
+    67 00000026 7701                    	ja .cont 		;Above, larger than 2
+    68 00000028 C3                      	ret
+    69                                  
+    70                                  .cont:
+    71 00000029 A901000000              	test eax, 1		;Is it even?
+    72 0000002E 7506                    	jnz .cont2		;Not zero, final bit was 1 (odd)
+    73 00000030 B802000000              	mov eax, 2
+    74 00000035 C3                      	ret
+    75                                  
+    76                                  .cont2:
+    77 00000036 89C7                    	mov edi, eax
+    78 00000038 BB03000000              	mov ebx, 3
+    79 0000003D CD03                    	int 3
+    80                                  
+    81 0000003F 39D8                    Qoop:	cmp eax, ebx
+    82 00000041 7611                    	jbe .out 		;Done if divisor > potential prime number
+    83                                  
+    84 00000043 F7F3                    	div ebx
+    85                                  
+    86 00000045 83FA00                  	cmp edx, 0 		;Zero remainder, clean division
+    87 00000048 7407                    	je .end
+    88 0000004A 83C302                  	add ebx, 2
+    89 0000004D 89F8                    	mov eax, edi
+    90 0000004F EBEE                    	jmp Qoop
+    91                                  
+    92                                  .end:
+    93 00000051 89D8                    	mov eax, ebx
+    94 00000053 C3                      	ret
+    95                                  
+    96                                  .out:
+    97 00000054 B800000000              	mov eax, 0
+    98 00000059 C3                      	ret
+    99                                  	
+   100                                  
+   101                                  	
+   102                                  	

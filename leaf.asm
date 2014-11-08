@@ -3,6 +3,7 @@
 	
 SECTION .data
 	stringL open_source, "Unable to access source file."
+	stringL arg_num, "Invalid # of arguments."
 
 	iPtr dd iBuff
 
@@ -17,19 +18,28 @@ global _start
 	
 _start:
 	pop ebx 		;# of arguments
+	cmp ebx, 2		;Only takes 1 arg atm
+	je arg_check		;Passed the check
+	pout arg_num
+	jmp wrap_up
+	
+arg_check:	
 	pop ebx			;Program's path
 	
 	pop ebx			;Source path
 	call open_r
 
 	cmp eax, -1 ;Sucessful calls return a positive fd
-	jne .cont
+	jg .cont
 	pout open_source
+	jmp wrap_up
+	
+
 
 .cont:
-	nop
-
-
+	;jmp router		
+;;; Create output file here, i believe (Yes indeed)
+	
 wrap_up:
 	
 	jmp exit
@@ -67,3 +77,5 @@ chpu:				;Character pull
 
 .daEnd:
 	jmp wrap_up
+
+;;; Returns char in al, uses ebx

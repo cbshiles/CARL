@@ -1,0 +1,5 @@
+I want something that can define synonyms easily. Often I end up writing a backhouse function and then little caller functions, but those little caller functions should really be a macro type thing.
+
+How about writing that parser for thompson's, eh?
+
+IN ASSEMBLY.... but after i do it in c
